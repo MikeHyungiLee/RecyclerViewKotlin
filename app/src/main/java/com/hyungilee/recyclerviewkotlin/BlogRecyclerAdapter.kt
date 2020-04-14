@@ -12,13 +12,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.hyungilee.recyclerviewkotlin.models.BlogPost
 import kotlinx.android.synthetic.main.layout_blog_list_item.view.*
 
-class BlogRecyclerAdapter : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>(){
+class BlogRecyclerAdapter(private val itemClick: (BlogPost)->Unit) : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>(){
 
     private var items : List<BlogPost> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_blog_list_item,parent,false)
-        return ViewHolder(view)
+        return ViewHolder(view, itemClick)
     }
 
     override fun getItemCount(): Int {
@@ -37,7 +37,7 @@ class BlogRecyclerAdapter : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>
         items = blogList
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View, itemClick: (BlogPost) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val blogImage: ImageView = itemView.blog_image
         private val blogTitle: TextView = itemView.blog_title
         private val blogAuthor: TextView = itemView.blog_author
@@ -46,6 +46,10 @@ class BlogRecyclerAdapter : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>
             blogTitle.text = blogPost.title
             blogAuthor.text = blogPost.username
 
+            itemView.setOnClickListener{
+                itemClick(blogPost)
+            }
+
             val requestOptions = RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background)
@@ -53,7 +57,6 @@ class BlogRecyclerAdapter : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>
                 .setDefaultRequestOptions(requestOptions)
                 .load(blogPost.image)
                 .into(blogImage)
-
         }
     }
 
