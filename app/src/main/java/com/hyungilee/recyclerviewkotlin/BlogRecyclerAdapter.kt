@@ -12,13 +12,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.hyungilee.recyclerviewkotlin.models.BlogPost
 import kotlinx.android.synthetic.main.layout_blog_list_item.view.*
 
-class BlogRecyclerAdapter(private val itemClick: (BlogPost)->Unit) : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>(){
+class BlogRecyclerAdapter : RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder>(){
 
     private var items : List<BlogPost> = ArrayList()
 
+    private lateinit var mOnPostClickListener: OnPostClickListener
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_blog_list_item,parent,false)
-        return ViewHolder(view, itemClick)
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -37,7 +39,7 @@ class BlogRecyclerAdapter(private val itemClick: (BlogPost)->Unit) : RecyclerVie
         items = blogList
     }
 
-    inner class ViewHolder(itemView: View, itemClick: (BlogPost) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val blogImage: ImageView = itemView.blog_image
         private val blogTitle: TextView = itemView.blog_title
         private val blogAuthor: TextView = itemView.blog_author
@@ -47,7 +49,7 @@ class BlogRecyclerAdapter(private val itemClick: (BlogPost)->Unit) : RecyclerVie
             blogAuthor.text = blogPost.username
 
             itemView.setOnClickListener{
-                itemClick(blogPost)
+                mOnPostClickListener.onClick(blogPost)
             }
 
             val requestOptions = RequestOptions()
@@ -57,7 +59,15 @@ class BlogRecyclerAdapter(private val itemClick: (BlogPost)->Unit) : RecyclerVie
                 .setDefaultRequestOptions(requestOptions)
                 .load(blogPost.image)
                 .into(blogImage)
+
         }
     }
 
+    interface OnPostClickListener{
+        fun onClick(blogPost: BlogPost)
+    }
+
+    fun setOnPostClickListener(onPostClickListener: OnPostClickListener){
+        this.mOnPostClickListener = onPostClickListener
+    }
 }

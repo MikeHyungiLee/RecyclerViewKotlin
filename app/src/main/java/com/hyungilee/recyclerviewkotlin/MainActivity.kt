@@ -34,13 +34,18 @@ class MainActivity : AppCompatActivity() {
         // apply 를 사용해서 layoutManager 와 adapter 를 지정해주었을때,
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            blogAdapter = BlogRecyclerAdapter{
-                Toast.makeText(context, it.username, Toast.LENGTH_SHORT).show()
-            }
+            blogAdapter = BlogRecyclerAdapter()
+            blogAdapter.setOnPostClickListener(onPostClickListener)
             val topSpacingDecoration = TopSpacingItemDecoration(30)
             addItemDecoration(topSpacingDecoration)
             adapter = blogAdapter
         }
-        
+    }
+
+    // onPostClickListener
+    private val onPostClickListener = object : BlogRecyclerAdapter.OnPostClickListener{
+        override fun onClick(blogPost: BlogPost) {
+            Toast.makeText(applicationContext, blogPost.username, Toast.LENGTH_SHORT).show()
+        }
     }
 }
